@@ -275,7 +275,7 @@ $('#pdfBtn').click(function (e) {
 
     // exportToPDF(table,formName,"ItemsList","1")
 
-    exportToPDF(table,formName2,"ItemsList","1")
+    exportToPDF(table,formName,"ItemsList","1")
 
 
 });
