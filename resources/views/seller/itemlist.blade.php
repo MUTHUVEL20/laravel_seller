@@ -273,6 +273,8 @@ $('#pdfBtn').click(function (e) {
 
      const formName = "Items List";
 
+    // exportToPDF(table,formName,"ItemsList","1")
+
     exportToPDF(table,formName,"ItemsList","1")
 
 
