@@ -8,7 +8,14 @@
  <!-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> -->
   <script src="https://cdn.tailwindcss.com"></script>
 
- 
+ <style>
+.custom-table tbody tr.selected td {
+    background-color: #CCDCFC !important; 
+    border-right: 1px solid #9fbbf9 !important;
+}
+
+
+</style>
 </head>
 <body class="bg-white min-h-screen flex flex-col justify-between">
 
@@ -19,7 +26,7 @@
 <h1 class="text-xl mb-2"> Items List</h1>
 
 
-<form method="GET" action="{{ route('items') }}" class="flex justify-center mb-4">
+<!-- <form method="GET" action="{{ route('items') }}" class="flex justify-center mb-4">
     <input 
         type="text" 
         name="search" 
@@ -28,10 +35,14 @@
         value="{{ request('search') }}" 
         class="border border-gray-300 rounded-lg p-2 w-1/2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
     >
+
+    
     <button type="submit" class="ml-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
         Search
     </button>
-</form>
+</form> -->
+
+<input type="text" id="searchInput" placeholder="Quick Search : Ctrl + Q" class="border p-2 rounded-lg   text-center align-sub ">
 
 <div class="mt-1 ms-3 ">
     <button onclick="openFilterModal()"
@@ -60,7 +71,7 @@
    Export to Excel
 </a>
 
-<table class="w-full" id="itemsTable">
+<table class="w-full custom-table" id="itemsTable">
 
 <thead class="bg-gray-50 border-b-2 border-gray-200">
 
@@ -79,48 +90,11 @@
  <th class="p-3 text-lg font-mono  text-left tracking-normal"></th>
 </thead>
 
-<tbody>
+<tbody  id="itemRows">
 
-@php $i = 0; @endphp
-@foreach ($items as $item)
+  @include('seller.partials.items_row', ['items' => $items])
 
- @php $i++; @endphp
-
-<tr class="bg-white">
-
-     <!-- <td class="p-3 text-sm text-gray-700">{{ $i }}</td> -->
-
-     <td class="p-3 text-sm text-gray-700"> {{ $item->itemname }}</td>
-
-     <td class="p-3  text-gray-700 text-sm  ">{{ $item->itemgroup1 }}</td>
-
-
-
-     <td class="p-3 text-sm text-gray-700"> {{ $item->itemgroup2 }}</td>
-
-     <td class="p-3 text-sm text-gray-700"> {{ $item->unitname }}</td>
-
-    
-
-       <td style=" text-center">
-
-
-     <!-- <span alt="Edit" class="edit-btn mr-3 me-3" title="Edit Firm" style="cursor:pointer;color: #0066cc;font-weight:500;" data-itemno = '{{ $item -> itemno }}'  >Edit</span>
-       -->
-  <form action="{{ route('edititems') }}" method="POST" style="display:inline;">
-    @csrf
-    <input type="hidden" name="itemno" value="{{ $item->itemno }}">
-    <button type="submit" title="Edit">
-        <img src="{{ asset('images/Edit Icon-1.png') }}" alt="Edit" width="18" height="18" style="margin-right: 8px;">
-    </button>
-</form>
-
-
-   </a>
-     </td>
-</tr>
-
-@endforeach
+   
 
 </tbody>
 
@@ -298,7 +272,105 @@ $('#excelBtn').click(function (e) {
 
 
 });
-        </script>
+
+
+document.getElementById('searchInput').addEventListener('keyup', function() {
+    let search = this.value;
+
+    fetch("{{ route('searchitems') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+            "X-Requested-With": "XMLHttpRequest" // Important for AJAX detection
+        },
+        body: JSON.stringify({ search: search })
+    })
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById('itemRows').innerHTML = data;
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+
+function highlightFirstRow() {
+    var firstRow = $('#itemsTable tbody tr:first');
+    firstRow.addClass('selected');
+    // scrollIntoViewIfNeeded(firstRow[0]);
+}
+
+
+
+$('#itemsTable tbody').on('click','tr', function () {
+
+    $('#itemsTable tbody tr').removeClass('selected');
+
+    $(this).addClass('selected');
+})
+     
+   $(document).ready(function () {
+    
+     highlightFirstRow()
+    
+   });
+
+
+   $(document).on('keydown', function (e) {
+
+
+    var selectedRow = $('#itemsTable tbody tr.selected');
+
+    if (selectedRow.length > 0) {
+
+
+        if (e.which === 38) {
+
+
+            var prevRow = selectedRow.prev('tr');
+
+
+            if (prevRow.length > 0) {
+
+                e.preventDefault();
+
+                selectedRow.removeClass ('selected');
+
+                prevRow.addClass ('selected');
+
+
+            }
+
+         
+        }
+
+
+           else if (e.which === 40) {
+              
+                 e.preventDefault();  
+
+                var nextRow = selectedRow.next('tr');
+
+
+                if (nextRow.length > 0) {
+
+                    
+
+                       selectedRow.removeClass ('selected');
+
+                       nextRow.addClass('selected');
+
+                }
+            }
+
+            else if (e.which === 13) { // Enter key
+                e.preventDefault();
+                $('.edit-btn', selectedRow).trigger('click');
+            } 
+    }
+   })
+     
+     </script>
 
         
 

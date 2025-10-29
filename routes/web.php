@@ -54,6 +54,9 @@ Route::post('/saveitems',[sellerController::class,'saveitem']);
 
 Route::get('/itemslist',[sellerController::class,'itemlist'])->name('items');
 
+
+Route::post('/itemssearch', [sellerController::class, 'searchitems'])->name('searchitems');
+
 // Route::get('/edititems/{itemno}', [SellerController::class, 'editItem'])->name('edititems');
 
 Route::post('/edititems', [SellerController::class, 'editItem'])->name('edititems');

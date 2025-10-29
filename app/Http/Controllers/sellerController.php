@@ -684,6 +684,8 @@ public function itemlist(Request $request) {
               ->orWhere('itemgroup2', 'like', "%{$search}%")
               ->orWhere('unitname', 'like', "%{$search}%");
         });
+
+    
     }
 
     if (!empty($category)) {
@@ -699,6 +701,46 @@ public function itemlist(Request $request) {
 
     return view('seller.itemlist', ['items' => $items]);
 }
+
+
+
+
+
+public function searchitems(Request $request)
+{
+    $sellerid = session('sellerid');
+    if (!$sellerid) {
+        return redirect()->route('login')->with('error', 'Please login first');
+    }
+
+    $dbname = "dmrapp_dmrslr" . $sellerid;
+    $this->connectSellerDB($dbname);
+
+    $itemModel = new items();
+    $itemModel->setConnection('dynamic');
+
+    $search = $request->input('search');
+    $query = $itemModel::query();
+
+    if (!empty($search)) {
+        $query->where(function ($q) use ($search) {
+            $q->where('itemname', 'like', "%{$search}%")
+              ->orWhere('itemgroup1', 'like', "%{$search}%")
+              ->orWhere('itemgroup2', 'like', "%{$search}%")
+              ->orWhere('unitname', 'like', "%{$search}%");
+        });
+    }
+
+    $items = $query->get();
+
+    // Check if it's an AJAX request
+    if ($request->ajax() || $request->wantsJson()) {
+        return view('seller.partials.items_row', compact('items'))->render();
+    }
+
+    return view('seller.itemlist', compact('items'));
+}
+
 
 
 public function editItem(Request $request)
