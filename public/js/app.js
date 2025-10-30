@@ -20258,6 +20258,13 @@ $('.applyBtn').click(function (e) {
     let category = $('#category').val().trim();
     let brand = $('#brand').val().trim();
 
+      const filterData = {
+        category: category,
+       brand: brand
+
+      }
+
+        localStorage.setItem('FilterData', JSON.stringify(filterData));
     // Send as GET request with query parameters
     $.ajax({
         url: '/itemslist',

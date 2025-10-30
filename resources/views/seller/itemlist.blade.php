@@ -196,6 +196,14 @@
     <script>
 
          function openFilterModal() {
+
+            const savedFilter = localStorage.getItem('FilterData');
+
+    if (savedFilter) {
+        const { category, brand } = JSON.parse(savedFilter);
+        $('#category').val(category);
+        $('#brand').val(brand);
+    }
         document.getElementById('filterModal').classList.remove('hidden');
     }
 
@@ -206,6 +214,8 @@
          $('#category').val('');
 
           $('#brand').val('');
+
+            localStorage.removeItem('FilterData');
 
           window.location.href = '/itemslist';
     
@@ -312,6 +322,64 @@ $('#itemsTable tbody').on('click','tr', function () {
    $(document).ready(function () {
     
      highlightFirstRow()
+
+
+     var selectedItemno = localStorage.getItem('selectedItemno');
+
+
+     if (selectedItemno) {
+
+
+        const matchingRow = $('#itemsTable tbody tr[data-itemno="' + selectedItemno + '"]');
+
+
+        if (matchingRow.length > 0) {
+
+            $('#itemsTable tbody tr').removeClass('selected');
+
+            matchingRow.addClass ('selected');
+
+             matchingRow[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+
+        localStorage.removeItem('selectedItemno')
+
+
+        
+     }
+
+
+         const filterData = localStorage.getItem('FilterData');
+
+    if (filterData) {
+        const { category, brand } = JSON.parse(filterData);
+
+        // If either filter exists, fetch filtered list automatically
+        if (category || brand) {
+            $.ajax({
+                url: '/itemslist',
+                type: 'GET',
+                data: { category, brand },
+                success: function (response) {
+                     const newRows = $(response).find('#itemRows').html();
+                    $('#itemRows').html(newRows);
+
+                    // Optionally reapply row highlight if needed
+                    // const selectedItemno = localStorage.getItem('selectedItemno');
+                    // if (selectedItemno) {
+                    //     const matchingRow = $('#itemsTable tbody tr[data-itemno="' + selectedItemno + '"]');
+                    //     matchingRow.addClass('selected');
+                    // }
+
+                      highlightFirstRow()
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+    }
     
    });
 
@@ -365,10 +433,70 @@ $('#itemsTable tbody').on('click','tr', function () {
 
             else if (e.which === 13) { // Enter key
                 e.preventDefault();
-                $('.edit-btn', selectedRow).trigger('click');
+
+                // alert("enter")
+
+                // windows.location.href = "/edititems";
+                 $('.edit-item-btn', selectedRow).trigger('click');
             } 
     }
    })
+
+
+   $('.edit-item-btn').click(function () {
+
+
+    // alert("click")
+
+    var row = $(this).closest('tr');
+
+
+    storecurrentRow (row);
+
+
+    window.location.href = "/edititems";
+
+    
+   })
+
+
+
+   function storecurrentRow (row) {
+
+
+    var itemno = row.attr ('data-itemno');
+
+    // alert(itemno)
+
+     localStorage.setItem('selectedItemno', itemno);
+   }
+
+//    $(document).ready(function () {
+//     // Check if filters were stored previously
+//     const filterData = localStorage.getItem('FilterData');
+
+//     if (filterData) {
+//         const { category, brand } = JSON.parse(filterData);
+
+//         // If either filter exists, fetch filtered list automatically
+//         if (category || brand) {
+//             $.ajax({
+//                 url: '/itemslist',
+//                 type: 'GET',
+//                 data: { category, brand },
+//                 success: function (response) {
+//                     $('body').html(response);
+
+//                       highlightFirstRow()
+//                 },
+//                 error: function (xhr, status, error) {
+//                     console.error(error);
+//                 }
+//             });
+//         }
+//     }
+// });
+
      
      </script>
 

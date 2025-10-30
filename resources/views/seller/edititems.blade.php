@@ -123,12 +123,20 @@
 
 </div>
 
+<form id="redirectToItemslist" action="{{ route('items') }}" method="POST" style="display:none;">
+    @csrf
+</form>
 
 
-
-   <div class="pt-4">
+   <div class="pt-4   align-middle">
             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md" id="additems">
                 Save
+            </button>
+
+            
+
+              <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md" id="cancelBtn">
+                Cancel
             </button>
         </div>
 
@@ -138,5 +146,16 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('js/app.js') }}"></script>
+
+    <script>
+
+      
+
+      $('#cancelBtn').click(function () {
+
+            window.location.href = "/itemslist";
+      });
+
+      </script>
 </body>
 </html>
