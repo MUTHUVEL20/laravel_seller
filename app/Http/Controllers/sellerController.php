@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Mail;
 
 use App\Mail\PasswordResetMail;
 
+use App\Mail\BulkMail;
+
 use Illuminate\Support\Str;
 
 
@@ -605,7 +607,7 @@ public function saveitem (Request $request) {
     ]);
 
 
-      $sellerid = session('sellerid');
+      $sellerid = session('sellerid') ;
 
     if (!$sellerid) {
         return redirect()->route('seller.login')->with('error', 'Please login first');
@@ -783,6 +785,40 @@ public function exportToPDF()
 
     // Download the file
     return $pdf->download('ItemsList.pdf');
+}
+
+
+// public function sendBulkMail()
+// {
+//     $recipients = [
+//         'developers.lanzermark@gmail.com',
+//         'l.muthuvel1999@gmail.com'
+//     ];
+
+//     foreach ($recipients as $email) {
+        
+//         // send individually
+//         Mail::to($email)
+//             ->send(new BulkMail('Hi, this is a test bulk email sent individually.'));
+//     }
+
+//     return response()->json(['message' => 'Emails sent individually to all recipients']);
+// }
+
+
+public function sendBulkMail()
+{
+    $recipients = [
+        'developers.lanzermark@gmail.com',
+        'buyer.dmrcoders@gmail.com'
+    ];
+
+    // Send one email with all recipients in BCC only
+    Mail::to('l.muthuvel1999@gmail.com') // Your own email as primary
+        ->bcc($recipients) // All recipients hidden in BCC
+        ->send(new BulkMail('Hi, this is a test bulk email.'));
+
+    return response()->json(['message' => 'Email sent to all recipients']);
 }
 
 }
