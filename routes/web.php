@@ -63,3 +63,5 @@ Route::post('/edititems', [SellerController::class, 'editItem'])->name('edititem
 
 
 Route::get('/itemsPdf', [sellerController::class,'exportToPDF'])->name('items.pdf');
+
+

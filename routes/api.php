@@ -25,3 +25,20 @@ Route::post('/saveitems',[sellerController::class,'saveitem']);
 
 
 Route::post('/bulkmail',[sellerController::class,'sendBulkMail']);
+
+
+Route::get('/month/{num}', function ($num) {
+
+    if ($num == 1) {
+
+        return 'JANUARY';
+    }
+    else if ($num == 2) {
+
+        return 'FEBRUARY';
+    }
+    else if ($num == 3) {
+
+        return 'MARCH';
+    }
+})-> middleware('monthMiddleware');
