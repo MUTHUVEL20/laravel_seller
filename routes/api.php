@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::post('/saveitems',[sellerController::class,'saveitem']);
+Route::post('/saveitems',[sellerController::class,'saveitem'])-> middleware('apiToken');
 
 
 Route::post('/bulkmail',[sellerController::class,'sendBulkMail']);
@@ -42,3 +42,14 @@ Route::get('/month/{num}', function ($num) {
         return 'MARCH';
     }
 })-> middleware('monthMiddleware');
+
+
+Route::get('user/data', function () {
+
+    return response() -> json ([
+
+        'username' => 'Muthu Vel',
+        'Role'     => 'Developer',
+        'status'   => 'success'
+    ]);
+})-> middleware('apiToken');

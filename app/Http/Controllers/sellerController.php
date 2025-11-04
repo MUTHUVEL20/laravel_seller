@@ -607,7 +607,7 @@ public function saveitem (Request $request) {
     ]);
 
 
-      $sellerid = session('sellerid') ;
+      $sellerid = session('sellerid') ?? 19;
 
     if (!$sellerid) {
         return redirect()->route('seller.login')->with('error', 'Please login first');
